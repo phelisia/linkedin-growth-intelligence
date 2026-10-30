@@ -8,6 +8,8 @@ on:
     paths:
       - 'linkedin_intelligence/**'
       - '.github/workflows/dbt-transform.yml'
+  schedule:
+    - cron: '0 3 * * *'    
 
 jobs:
   dbt-build:
