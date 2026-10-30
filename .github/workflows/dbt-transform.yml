@@ -1,0 +1,66 @@
+name: dbt Transformations
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'linkedin_intelligence/**'
+      - '.github/workflows/dbt-transform.yml'
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: linkedin_intelligence
+
+    env:
+      DBT_PROFILES_DIR: ${{ github.workspace }}/.dbt
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dbt Core and PostgreSQL adapter
+        run: pip install dbt-core dbt-postgres
+
+      - name: Configure dbt profile
+        env:
+          NEON_HOST: ${{ secrets.NEON_HOST }}
+          NEON_USER: ${{ secrets.NEON_USER }}
+          NEON_PASSWORD: ${{ secrets.NEON_PASSWORD }}
+          NEON_DATABASE: ${{ secrets.NEON_DATABASE }}
+        run: |
+          mkdir -p "$DBT_PROFILES_DIR"
+          cat > "$DBT_PROFILES_DIR/profiles.yml" <<EOF
+          linkedin_intelligence:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                host: "$NEON_HOST"
+                user: "$NEON_USER"
+                password: "$NEON_PASSWORD"
+                port: 5432
+                dbname: "$NEON_DATABASE"
+                schema: staging
+                threads: 4
+                sslmode: require
+          EOF
+
+      - name: Install dbt packages
+        run: dbt deps
+
+      - name: Test Neon connection
+        run: dbt debug
+
+      - name: Build dbt models and run tests
+        run: dbt build
