@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: linkedin_intelligence
+    database: linkedin_growth_db
+    schema: raw
+
+    tables:
+      - name: linkedin_posts
+      - name: linkedin_post_media
+      - name: linkedin_post_metrics
+      - name: linkedin_post_analytics
+      - name: linkedin_follower_history
+      - name: linkedin_content_demographics
+      - name: linkedin_audience_demographics

@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: stg__linkedin_posts_analytics
+    description: "Staging model for LinkedIn post analytics."
+
+    columns:
+      - name: post_id
+        description: "Unique identifier for each LinkedIn post."
+        data_tests:
+          - not_null
+          - unique
