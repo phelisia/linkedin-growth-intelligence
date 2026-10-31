@@ -13,7 +13,7 @@ on:
 
 jobs:
   dbt-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     defaults:
       run:
@@ -24,15 +24,15 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
       - name: Install dbt Core and PostgreSQL adapter
-        run: pip install dbt-core dbt-postgres
+        run: pip install dbt-core==1.12.6 dbt-postgres==1.11.0
 
       - name: Configure dbt profile
         env:
